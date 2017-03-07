@@ -1,8 +1,6 @@
 <template>
   <div class="edit_type">
-    <el-button type="small" @click="dialogFormVisible = true"><slot></slot></el-button>
-
-    <el-dialog :title="title" v-model="dialogFormVisible" size="tiny">
+    <el-dialog :title="options.title" v-model="options.dialogFormVisible" size="tiny">
       <el-form :model="form" ref="form" :rules="rules">
         <el-form-item label="菜品名称" prop="name" :label-width="formLabelWidth">
           <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -18,7 +16,7 @@
 
 <script>
 export default {
-  props: ['title', 'data', 'type'],
+  props: ['form', 'options'],
   components: {
 
   },
@@ -33,9 +31,6 @@ export default {
     return {
       dialogTableVisible: false,
       dialogFormVisible: false,
-      form: {
-        name: this.data.name || null
-      },
       rules: {
         name: [
           { validator: validateName, trigger: 'blur' }
@@ -48,10 +43,10 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.type === 'add') {
+          if (this.options.type === 'add') {
             this.handleAddType()
           }
-          if (this.type === 'edit') {
+          if (this.options.type === 'edit') {
             this.handleModifyType()
           }
         } else {
@@ -65,7 +60,9 @@ export default {
     },
     handleAddType () {
       var url = 'https://order.jrhs.new-sailing.com/addType'
-      var params = {name: this.form.name}
+      var params = {
+        name: this.form.name
+      }
       console.log(params)
       this.$http.get(url, {
         params: params,
@@ -84,9 +81,13 @@ export default {
         if (response.body.errCode) {
           console.log('failed', response.body)
         } else {
-          console.log('success', response.body.data)
+          // console.log('success', response.body.data)
           this.$emit('refetchType')
-          this.dialogFormVisible = false
+          this.options.dialogFormVisible = false
+          this.$message({
+            type: 'success',
+            message: '添加菜品种类成功'
+          })
         }
       }, response => {
         // error callback
@@ -95,7 +96,10 @@ export default {
     },
     handleModifyType () {
       var url = 'https://order.jrhs.new-sailing.com/modifyType'
-      var params = {typeId: this.data.id, name: this.form.name}
+      var params = {
+        typeId: this.options.typeId,
+        name: this.form.name
+      }
       console.log(params)
       this.$http.get(url, {
         params: params,
@@ -114,21 +118,19 @@ export default {
         if (response.body.errCode) {
           console.log('failed', response.body)
         } else {
-          console.log('success', response.body.data)
+          // console.log('success', response.body.data)
           this.$emit('refetchType')
-          this.dialogFormVisible = false
+          this.options.dialogFormVisible = false
+          this.$message({
+            type: 'success',
+            message: '编辑菜品种类成功'
+          })
         }
       }, response => {
         // error callback
         console.log('error')
       })
     }
-  },
-  created () {
-    // console.log('dialog edit created: ', this.data)
-  },
-  mounted () {
-    // console.log('dialog edit mounted', this.data)
   }
 }
 </script>

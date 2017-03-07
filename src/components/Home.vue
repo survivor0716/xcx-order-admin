@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <dishes-type @updateDetail="updateDetail"></dishes-type>
-    <dishes-detail :tableData="dishesDetailData" :typeId="currentTypeId"></dishes-detail>
+    <dishes-type @updateDetail="updateDetail" ref="dishesType"></dishes-type>
+    <dishes-detail :tableData="dishesDetailData" :typeId="currentTypeId" @refetchType="refetchType"></dishes-detail>
   </div>
 </template>
 
@@ -23,8 +23,12 @@ export default {
   },
   methods: {
     updateDetail (detail, id) {
+      console.log('$emit to Home.vue', detail, id)
       this.dishesDetailData = detail
       this.currentTypeId = id
+    },
+    refetchType () {
+      this.$refs.dishesType.getType()
     }
   }
 }

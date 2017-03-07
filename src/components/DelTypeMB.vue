@@ -7,12 +7,12 @@
     props: ['row'],
     methods: {
       open2 () {
-        this.$confirm('是否删除该菜品, 是否继续?', '提示', {
+        this.$confirm('是否删除该菜品种类, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.handleDelDish()
+          this.handleDelType()
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -20,10 +20,10 @@
           })
         })
       },
-      handleDelDish () {
-        var url = 'https://order.jrhs.new-sailing.com/delMenu'
+      handleDelType () {
+        var url = 'https://order.jrhs.new-sailing.com/delType'
         var params = {
-          menuId: this.row.id
+          typeId: this.row.id
         }
         console.log(params)
         this.$http.get(url, {
@@ -41,9 +41,13 @@
           // success callback
           if (response.body.errCode) {
             console.log('failed', response.body)
+            this.$message({
+              type: 'error',
+              message: response.body.errMsg
+            })
           } else {
             // console.log('success', response.body.data)
-            this.$emit('refetchData')
+            this.$emit('refetchType')
             this.$message({
               type: 'success',
               message: '菜品已删除'

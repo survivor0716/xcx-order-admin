@@ -3,11 +3,8 @@
     <el-table
     :data="tableData"
     stripe
-    style="width: 100%">
-      <el-table-column
-        prop="id"
-        label="菜品id">
-      </el-table-column>
+    style="width: 100%"
+    height="250">
       <el-table-column
         prop="name"
         label="菜品种类">
@@ -19,68 +16,61 @@
       <el-table-column label="操作">
         <template scope="scope">
         <el-button size="small" @click="getMenu(scope.row.id)">获取菜品列表</el-button>
-        <!-- <el-button
-          size="small"
-          @click="handleEdit(scope.$index, scope.row)">编辑1</el-button> -->
-          <dialog-type title="编辑菜品种类" :data="scope.row" @refetchType="getType" type="edit">编辑</dialog-type>
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete(scope.row.id, scope.$index, tableData)">删除</el-button>
+          <!-- <dialog-type title="编辑菜品种类" :data="scope.row" @refetchType="getType" type="edit">编辑</dialog-type> -->
+          <el-button size="small" icon="edit" @click="showDialogEdit(scope.row)">编辑</el-button>
+          <del-type :row="scope.row" @refetchType="getType"></del-type>
         </template>
       </el-table-column>
     </el-table>
-    <dialog-type title="添加菜品种类" data="" @refetchType="getType" type="add">添加</dialog-type>
+    <el-button type="primary" size="small" icon="plus" @click="showDialogAdd">添加</el-button>
+    <dialog-type :form="selectedRow" :options="options" @refetchType="getType"></dialog-type>
   </div>
 </template>
 
 <script>
 import DialogType from '@/components/DialogType'
+import DelType from '@/components/DelTypeMb'
 
 export default {
   name: 'dish_type',
   components: {
-    DialogType
+    DialogType,
+    DelType
   },
   data () {
     return {
-      tableData: null
+      tableData: null,
+      options: {
+        title: null,
+        type: null,
+        typeId: null,
+        dialogFormVisible: false
+      },
+      selectedRow: {
+        name: null
+      }
     }
   },
   methods: {
-    handleEdit (index, row) {
-      console.log(arguments)
+    showDialogEdit (row) {
+      this.options = {
+        title: '编辑菜品种类',
+        type: 'edit',
+        typeId: row.id,
+        dialogFormVisible: true
+      }
+      this.selectedRow = row
     },
-    handleDelete (id, index, rows) {
-      var url = 'https://order.jrhs.new-sailing.com/delType'
-      var params = {typeId: id}
-      console.log(params)
-      this.$http.get(url, {
-        params: params,
-        // use before callback
-        before (request) {
-          // abort previous request, if exists
-          if (this.previousRequest) {
-            this.previousRequest.abort()
-          }
-
-          // set previous request on Vue instance
-          this.previousRequest = request
-        }
-
-      }).then(response => {
-        // success callback
-        if (response.body.errCode) {
-          console.log('failed', response.body)
-        } else {
-          console.log('handled delete', response.body)
-          // this.getType()
-          rows.splice(index, 1)
-        }
-      }, response => {
-        // error callback
-        console.log('error')
-      })
+    showDialogAdd () {
+      this.options = {
+        title: '添加菜品种类',
+        type: 'add',
+        typeId: null,
+        dialogFormVisible: true
+      }
+      this.selectedRow = {
+        name: null
+      }
     },
     getType () {
       var url = 'https://order.jrhs.new-sailing.com/getType'
@@ -101,7 +91,7 @@ export default {
         if (response.body.errCode) {
           console.log('failed', response.body)
         } else {
-          console.log('got type', response.body.data)
+          // console.log('got type', response.body.data)
           this.tableData = response.body.data
         }
       }, response => {
@@ -131,7 +121,7 @@ export default {
         if (response.body.errCode) {
           console.log('failed', response.body)
         } else {
-          // console.log('success', response.body.data)
+          console.log('getMenu response: ', response.body.data)
           this.$emit('updateDetail', response.body.data, id)
           // this.tableData = response.body.data
         }
@@ -149,7 +139,7 @@ export default {
 
 <style scoped lang="less">
 .dish_type {
-  width: 600px;
+  width: 900px;
   text-align: left;
 }
 </style>
