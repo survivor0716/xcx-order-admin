@@ -1,5 +1,6 @@
 <template>
   <div class="dish_detail">
+    <h3>{{type}}</h3>
     <el-table
     :data="tableData"
     stripe
@@ -9,22 +10,38 @@
     height="400">
       <el-table-column
         prop="name"
-        label="菜品名称">
+        label="菜品名称"
+        width="100">
       </el-table-column>
       <el-table-column
         prop="price"
-        label="单价（元）">
+        label="单价（元）"
+        width="120">
       </el-table-column>
       <el-table-column
         prop="unit"
-        label="单位">
+        label="单位"
+        width="80">
+      </el-table-column>
+      <el-table-column
+        prop="remark"
+        label="备注"
+        width="300">
+      </el-table-column>
+      <el-table-column
+        prop="remark"
+        label="状态"
+        width="100">
+        <template scope="scope">
+          {{scope.row.state === 1 ? '正常' : scope.row.state === 2 ? '售罄' : '下架'}}
+        </template>
       </el-table-column>
       <el-table-column
         prop="img"
         label="图片">
         <template scope="scope">
           <!-- <a v-if="scope.row.img" :href="scope.row.img" target="_blank">查看图片</a> -->
-          <img v-if="scope.row.img" :src="scope.row.img" alt="" style="height: 60px">
+          <img :src="scope.row.img ? scope.row.img : img" alt="" style="height: 60px">
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200">
@@ -35,23 +52,26 @@
       </el-table-column>
     </el-table>
     <el-button v-if="typeId" type="primary" size="small" icon="plus"  @click="showDialogAdd">添加</el-button>
-    <dialog-edit :form="selectedRow" :options="options" @refetchData="refetchData"></dialog-edit>
+    <dialog-edit :rowData="rowData" :options="options" @refetchData="refetchData"></dialog-edit>
   </div>
 </template>
 
 <script>
-import DialogEdit from '@/components/DialogEdit'
-import ComfirmMb from '@/components/ComfirmMB'
+import DialogEdit from '@/components/DialogDish'
+import ComfirmMb from '@/components/DelDishMB'
+import dishImg from '../assets/food.jpg'
+// import config from '../../config'
 
 export default {
   name: 'dish_detail',
-  props: ['tableData', 'typeId'],
+  props: ['tableData', 'typeId', 'type'],
   components: {
     DialogEdit,
     ComfirmMb
   },
   data () {
     return {
+      img: dishImg,
       loading: false,
       options: {
         title: null,
@@ -60,11 +80,14 @@ export default {
         menuId: null,
         dialogFormVisible: false
       },
-      selectedRow: {
+      rowData: {
         name: null,
         price: null,
         unit: null,
-        img: null
+        remark: null,
+        state: null,
+        img: null,
+        sort: null
       }
     }
   },
@@ -80,7 +103,7 @@ export default {
         menuId: row.id,
         dialogFormVisible: true
       }
-      this.selectedRow = row
+      this.rowData = row
     },
     showDialogAdd () {
       this.options = {
@@ -89,44 +112,18 @@ export default {
         typeId: this.typeId,
         dialogFormVisible: true
       }
-      this.selectedRow = {
+      this.rowData = {
         name: null,
         price: null,
         unit: null,
-        img: null
+        remark: null,
+        state: null,
+        img: null,
+        sort: null
       }
     },
     refetchData () {
-      // console.log(id)
-      var url = 'https://order.jrhs.new-sailing.com/getMenu'
-      var params = {typeId: this.typeId}
-      this.$http.get(url, {
-        params: params,
-        // use before callback
-        before (request) {
-          // abort previous request, if exists
-          if (this.previousRequest) {
-            this.previousRequest.abort()
-          }
-
-          // set previous request on Vue instance
-          this.previousRequest = request
-        }
-
-      }).then(response => {
-        // success callback
-        if (response.body.errCode) {
-          console.log('failed', response.body)
-        } else {
-          // console.log('success', response.body.data)
-          // this.$emit('updateDetail', response.body.data, id)
-          this.tableData = response.body.data
-        }
-      }, response => {
-        // error callback
-        console.log('error')
-      })
-
+      this.$emit('refetchMenu', this.typeId)
       this.$emit('refetchType')
     }
   },

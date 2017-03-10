@@ -7,18 +7,28 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitForm('form')">提 交</el-button>
+        <el-button @click="options.dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @keyup.enter="submitForm('form')" @click="submitForm('form')">提 交</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import config from '../../config'
+
 export default {
-  props: ['form', 'options'],
+  props: ['rowToChild', 'options'],
   components: {
 
+  },
+  computed: {
+    form () {
+      return {
+        name: this.rowToChild.name,
+        sort: this.rowToChild.sort
+      }
+    }
   },
   data () {
     var validateName = (rule, value, callback) => {
@@ -38,6 +48,12 @@ export default {
       },
       formLabelWidth: '120px'
     }
+  },
+  created () {
+    // console.log(this.name)
+    // console.log(this.sort)
+    // this.form.name = this.name
+    // this.form.sort = this.sort
   },
   methods: {
     submitForm (formName) {
@@ -59,12 +75,15 @@ export default {
       this.$refs[formName].resetFields()
     },
     handleAddType () {
-      var url = 'https://order.jrhs.new-sailing.com/addType'
+      var api = config.build.api
+      // var api = config.dev.api
+      var url = api + '/addType'
+      // var url = 'https://order.jrhs.new-sailing.com/addType'
       var params = {
         name: this.form.name
       }
-      console.log(params)
-      this.$http.get(url, {
+      // console.log(params)
+      this.$http.post(url, {}, {
         params: params,
         // use before callback
         before (request) {
@@ -95,13 +114,16 @@ export default {
       })
     },
     handleModifyType () {
-      var url = 'https://order.jrhs.new-sailing.com/modifyType'
+      var api = config.build.api
+      // var api = config.dev.api
+      var url = api + '/modifyType'
+      // var url = 'https://order.jrhs.new-sailing.com/modifyType'
       var params = {
         typeId: this.options.typeId,
         name: this.form.name
       }
-      console.log(params)
-      this.$http.get(url, {
+      // console.log(params)
+      this.$http.post(url, {}, {
         params: params,
         // use before callback
         before (request) {

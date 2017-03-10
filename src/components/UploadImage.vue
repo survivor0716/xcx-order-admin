@@ -1,7 +1,7 @@
 <template>
   <el-upload
     class="avatar-uploader"
-    action="https://order.jrhs.new-sailing.com/upload"
+    :action="api"
     :show-file-list="false"
     :on-preview="handlePreview"
     :on-success="handleAvatarScucess"
@@ -13,12 +13,13 @@
 
 <style scoped>
   .avatar-uploader {
+    width: 178px;
+    margin: 0 auto;
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-
   }
   .avatar-uploader:hover {
     border-color: #20a0ff;
@@ -41,35 +42,43 @@
 </style>
 
 <script>
-  export default {
-    props: ['imageUrl'],
-    data () {
-      return {
-        // imageUrl: ''
-      }
-    },
-    methods: {
-      handleAvatarScucess (res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw)
-        console.log('upload success', res)
-        this.$emit('setImageUrl', res.data.file)
-      },
-      beforeAvatarUpload (file) {
-        const isJPG = file.type === 'image/jpeg'
-        const isPNG = file.type === 'image/png'
-        const isLt2M = file.size / 1024 / 1024 < 2
+import config from '../../config'
 
-        if (!isJPG && !isPNG) {
-          this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!')
-        }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!')
-        }
-        return (isJPG || isPNG) && isLt2M
-      },
-      handlePreview (file) {
-        console.log('handle preview', file)
+export default {
+  props: ['imageUrl'],
+  computed: {
+    api () {
+      return config.build.api + '/upload'
+      // return config.build.api + '/upload'
+    }
+  },
+  data () {
+    return {
+
+    }
+  },
+  methods: {
+    handleAvatarScucess (res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+      // console.log('upload success', res)
+      this.$emit('setImageUrl', res.data.file)
+    },
+    beforeAvatarUpload (file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isPNG = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG && !isPNG) {
+        this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!')
       }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return (isJPG || isPNG) && isLt2M
+    },
+    handlePreview (file) {
+      console.log('handle preview', file)
     }
   }
+}
 </script>

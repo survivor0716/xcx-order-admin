@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <dishes-type @updateDetail="updateDetail" ref="dishesType"></dishes-type>
-    <dishes-detail :tableData="dishesDetailData" :typeId="currentTypeId" @refetchType="refetchType"></dishes-detail>
+    <dishes-detail :tableData="dishesDetailData" :type="currentType" :typeId="currentTypeId" @refetchType="refetchType" @refetchMenu="refetchMenu"></dishes-detail>
   </div>
 </template>
 
@@ -18,17 +18,26 @@ export default {
   data () {
     return {
       dishesDetailData: null,
+      currentType: null,
       currentTypeId: null
     }
   },
   methods: {
-    updateDetail (detail, id) {
-      console.log('$emit to Home.vue', detail, id)
+    updateDetail (detail, id, type) {
+      // console.log('$emit to Home.vue', detail, id)
       this.dishesDetailData = detail
       this.currentTypeId = id
+      if (type) {
+        this.currentType = type
+      }
     },
     refetchType () {
+      // console.log('home refetchType')
       this.$refs.dishesType.getType()
+    },
+    refetchMenu (typeId) {
+      // console.log('home refetchMenu', typeId)
+      this.$refs.dishesType.getMenu(typeId)
     }
   }
 }
@@ -36,6 +45,7 @@ export default {
 
 <style scoped lang="less">
 .home {
-
+  width: 900px;
+  margin: 0 auto;
 }
 </style>

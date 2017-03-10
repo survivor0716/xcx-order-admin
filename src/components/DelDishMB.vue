@@ -1,5 +1,5 @@
 <template>
-  <el-button size="small" type="danger" icon="delete" @click="open2" :disabled="row.total > 0">删除</el-button>
+  <el-button size="small" type="danger" icon="delete" @click="open2">删除</el-button>
 </template>
 
 <script>
@@ -9,12 +9,12 @@ export default {
   props: ['row'],
   methods: {
     open2 () {
-      this.$confirm('是否删除该菜品种类, 是否继续?', '提示', {
+      this.$confirm('是否删除该菜品, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.handleDelType()
+        this.handleDelDish()
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -22,13 +22,13 @@ export default {
         })
       })
     },
-    handleDelType () {
+    handleDelDish () {
       var api = config.build.api
       // var api = config.dev.api
-      var url = api + '/delType'
-      // var url = 'https://order.jrhs.new-sailing.com/delType'
+      var url = api + '/delMenu'
+      // var url = 'https://order.jrhs.new-sailing.com/delMenu'
       var params = {
-        typeId: this.row.id
+        menuId: this.row.id
       }
       // console.log(params)
       this.$http.post(url, {}, {
@@ -46,13 +46,9 @@ export default {
         // success callback
         if (response.body.errCode) {
           console.log('failed', response.body)
-          this.$message({
-            type: 'error',
-            message: response.body.errMsg
-          })
         } else {
           // console.log('success', response.body.data)
-          this.$emit('refetchType')
+          this.$emit('refetchData')
           this.$message({
             type: 'success',
             message: '菜品已删除'
