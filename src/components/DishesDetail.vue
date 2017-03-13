@@ -2,12 +2,12 @@
   <div class="dish_detail">
     <h3>{{type}}</h3>
     <el-table
-    :data="tableData"
-    stripe
-    v-loading="loading"
-    element-loading-text="拼命加载中"
-    style="width: 100%"
-    height="400">
+      :data="tableData"
+      stripe
+      v-loading="loading"
+      element-loading-text="拼命加载中"
+      style="width: 100%"
+      height="350">
       <el-table-column
         prop="name"
         label="菜品名称"
@@ -135,7 +135,7 @@ export default {
 
 <style scoped lang="less">
 .dish_detail {
-  width: 900px;
+  width: 100%;
   text-align: left;
   margin-top: 20px;
 }

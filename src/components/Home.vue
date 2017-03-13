@@ -45,7 +45,7 @@ export default {
 
 <style scoped lang="less">
 .home {
-  width: 900px;
+  width: 100%;
   margin: 0 auto;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <div class="dish_type">
     <el-table
-    :data="tableData"
-    stripe
-    style="width: 100%"
-    height="250">
+      :data="tableData"
+      stripe
+      style="width: 100%"
+      height="250">
       <el-table-column
         prop="id"
         label="菜品种类id"
@@ -161,7 +161,7 @@ export default {
 
 <style scoped lang="less">
 .dish_type {
-  width: 900px;
+  width: 100%;
   text-align: left;
 }
 </style>

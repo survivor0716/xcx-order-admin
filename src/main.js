@@ -5,6 +5,7 @@ import VueResource from 'vue-resource'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import 'normalize.css'
 import 'element-ui/lib/theme-default/index.css'
 
 Vue.config.productionTip = false
